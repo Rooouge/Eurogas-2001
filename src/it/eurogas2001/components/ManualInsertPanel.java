@@ -218,7 +218,7 @@ public class ManualInsertPanel extends JPanel {
 			try {
 				String date = setDate();
 				
-				new TableFromExcelFrame(application, allAdded, (String) monthsBox.getSelectedItem() + " " + date.substring(date.length()-4), (String) typesBox.getSelectedItem(), date);
+				new TableFromExcelFrame(application, allAdded, (String) monthsBox.getSelectedItem() + " 2021", (String) typesBox.getSelectedItem(), date);
 			} catch (GenericException exception) {
 				JOptionPane.showMessageDialog(
 					application.getLastFrame(), 
