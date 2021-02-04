@@ -44,12 +44,12 @@ public class SaveFilesToDiskFrame {
 		this.month = month;
 		this.rowsFromFile = list;
 		
-		if(new File(Utils.genericPath).exists())
-			pathForSave = Utils.genericPath + month + "/";
+		if(new File(Utils.GENERIC_PATH).exists())
+			pathForSave = Utils.GENERIC_PATH + month + "/";
 		else
 			pathForSave = "./File Word/" + month + "/";
 		
-		JComboBox<String> outputFormatsBox = new JComboBox<>(Utils.availableFormats);
+		JComboBox<String> outputFormatsBox = new JComboBox<>(Utils.AVAILABLE_FORMATS);
 		outputFormatsBox.setSelectedIndex(1);
 		
 		TitledBorder formatBorder = new TitledBorder("Formato");

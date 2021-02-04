@@ -36,7 +36,6 @@ import it.eurogas2001.Utils;
 import it.eurogas2001.components.fileinformation.InformationClass;
 import it.eurogas2001.exceptions.EmptyFieldException;
 import it.eurogas2001.exceptions.FolderNotCreatedException;
-import it.eurogas2001.exceptions.FolderNotExistsException;
 import it.eurogas2001.exceptions.GenericException;
 import it.eurogas2001.exceptions.InvalidCapException;
 import it.eurogas2001.operations.createfiles.TableFromExcelFrame;
@@ -63,11 +62,10 @@ public class ManualInsertPanel extends JPanel {
 	
 	private JDatePickerImpl datePicker;
 	
-	private HSSFSheet sheet;
 	
 	public ManualInsertPanel(Application application) {
 		this.application = application;
-				
+		
 		JLabel label = new JLabel(" > Inserimento Manuale");
 		label.setForeground(Utils.EG2001_CYAN);
 		label.setFont(label.getFont().deriveFont(Utils.FONT_SIZE));
@@ -96,58 +94,19 @@ public class ManualInsertPanel extends JPanel {
 		panelBorder.setTitleColor(Utils.EG2001_CYAN);
 		
 		JButton addButton = new JButton("Aggiungi");
-		
-		addButton.addActionListener((e) -> {
-			try {
-				String name = nameField.getText().toUpperCase();
-				String address = addressField.getText().toUpperCase();
-				String town = townField.getText().toUpperCase();
-				String province = provinceField.getText().toUpperCase();
-				int cap = Integer.parseInt(capField.getText());
-				
-				if(name == null || name.equals(""))
-					throw new EmptyFieldException("Nome");
-				if(address == null || address.equals(""))
-					throw new EmptyFieldException("Indirizzo");
-				if(town == null || town.equals(""))
-					throw new EmptyFieldException("Città");
-				if(province == null || province.equals(""))
-					throw new EmptyFieldException("Provincia");
-				if(cap < 10000)
-					throw new InvalidCapException();
-				
-				
-				allAdded.add(new InformationClass(allAdded.size()+1, name, address, town, province, cap));
-				
-				updateTextArea();
-				
-				nameField.setText("");
-				addressField.setText("");
-				townField.setText("");
-				provinceField.setText("");
-				capField.setText("");
-			} catch(GenericException exception) {
-				JOptionPane.showMessageDialog(
-					application.getLastFrame(), 
-					exception.getMessage(), 
-					exception.getName(), 
-					JOptionPane.ERROR_MESSAGE
-				);
-			} catch(NumberFormatException n) {
-				InvalidCapException ice = new InvalidCapException();
-				JOptionPane.showMessageDialog(
-					application.getLastFrame(), 
-					ice.getMessage(), 
-					ice.getName(), 
-					JOptionPane.ERROR_MESSAGE
-				);
-			} catch(Throwable t) {
-				t.printStackTrace();
-			}
+		addButton.addActionListener(e -> add() );
+		JButton refreshButton = new JButton(new ImageIcon(getClass().getResource("/icons/refresh.png")));
+		refreshButton.addActionListener(e -> {
+			nameField.setText("");
+			addressField.setText("");
+			townField.setText("");
+			provinceField.setText("");
+			capField.setText("");
 		});
 		
-		JPanel buttonPanel = new JPanel(new FlowLayout());
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		buttonPanel.add(addButton);
+		buttonPanel.add(refreshButton);
 		
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBorder(panelBorder);
@@ -156,6 +115,55 @@ public class ManualInsertPanel extends JPanel {
 		return panel;
 	}
 	
+	public void add() {
+		try {
+			String name = nameField.getText().toUpperCase();
+			String address = addressField.getText().toUpperCase();
+			String town = townField.getText().toUpperCase();
+			String province = provinceField.getText().toUpperCase();
+			int cap = Integer.parseInt(capField.getText());
+			
+			if(name == null || name.equals(""))
+				throw new EmptyFieldException("Nome");
+			if(address == null || address.equals(""))
+				throw new EmptyFieldException("Indirizzo");
+			if(town == null || town.equals(""))
+				throw new EmptyFieldException("Città");
+			if(province == null || province.equals(""))
+				throw new EmptyFieldException("Provincia");
+			if(cap < 10000)
+				throw new InvalidCapException();
+			
+			
+			allAdded.add(new InformationClass(allAdded.size()+1, name, address, town, province, cap));
+			
+			updateTextArea();
+			
+			nameField.setText("");
+			addressField.setText("");
+			townField.setText("");
+			provinceField.setText("");
+			capField.setText("");
+		} catch(GenericException g) {
+			JOptionPane.showMessageDialog(
+				application.getLastFrame(), 
+				g.getMessage(), 
+				g.getName(), 
+				JOptionPane.ERROR_MESSAGE
+			);
+		} catch(NumberFormatException n) {
+			InvalidCapException ice = new InvalidCapException();
+			JOptionPane.showMessageDialog(
+				application.getLastFrame(), 
+				ice.getMessage(), 
+				ice.getName(), 
+				JOptionPane.ERROR_MESSAGE
+			);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private JPanel createAddInfoPanel() {
 		nameField = new JTextField();
 		addressField = new JTextField();
@@ -198,7 +206,7 @@ public class ManualInsertPanel extends JPanel {
 	}
 	
 	private void updateTextArea() {
-		if(allAddedTextArea.getText().length() == 0 || allAddedTextArea.getText().equals(null)) {
+		if(allAddedTextArea.getText().length() == 0 || allAddedTextArea.getText() == null) {
 			for(int i = 0; i < allAdded.size(); i++) {
 				if(i == 0)
 					allAddedTextArea.setText(allAdded.get(i).index + " - " + allAdded.get(i).name);
@@ -214,7 +222,7 @@ public class ManualInsertPanel extends JPanel {
 	
 	private JPanel createSouthPanel() {
 		JButton nextButton = new JButton("Prosegui");
-		nextButton.addActionListener((e) -> {
+		nextButton.addActionListener(e -> {
 			try {
 				String date = setDate();
 				
@@ -226,7 +234,7 @@ public class ManualInsertPanel extends JPanel {
 					"Error: " + exception.getName(), 
 					JOptionPane.ERROR_MESSAGE
 				);
-			} catch (Throwable finalException) {
+			} catch (Exception finalException) {
 				finalException.printStackTrace();
 			}
 		});
@@ -245,7 +253,7 @@ public class ManualInsertPanel extends JPanel {
 	}
 	
 	private JPanel createInformationsPanel() {
-		typesBox = new JComboBox<>(Utils.types);
+		typesBox = new JComboBox<>(Utils.TYPES);
 		
 		TitledBorder typeBorder = new TitledBorder("Tipo");
 		typeBorder.setTitleColor(Utils.EG2001_CYAN);
@@ -264,9 +272,7 @@ public class ManualInsertPanel extends JPanel {
 		model.setSelected(true);
 		JDatePanelImpl datePanelImpl = new JDatePanelImpl(model);
 		datePicker = new JDatePickerImpl(datePanelImpl);
-		datePicker.getJFormattedTextField().addCaretListener((e) -> {
-			setSelectedMonth();
-		});
+		datePicker.getJFormattedTextField().addCaretListener(e -> setSelectedMonth() );
 		
 		
 		TitledBorder dateBorder = new TitledBorder("Data");
@@ -276,7 +282,7 @@ public class ManualInsertPanel extends JPanel {
 		datePanel.setBorder(dateBorder);
 		datePanel.add(datePicker);
 		
-		monthsBox = new JComboBox<>(Utils.months);
+		monthsBox = new JComboBox<>(Utils.MONTHS);
 		setSelectedMonth();
 		
 		TitledBorder expiryBorder = new TitledBorder("Scadenza");
@@ -292,20 +298,15 @@ public class ManualInsertPanel extends JPanel {
 		
 		JButton openInExplorerButton = new JButton(new ImageIcon(getClass().getResource("/icons/open_folder.png")));
 		openInExplorerButton.setFocusable(false);
-		openInExplorerButton.addActionListener((e) -> {
+		openInExplorerButton.addActionListener(e -> {
 			String path;
-			if(new File(Utils.genericPath).exists())
-				path = Utils.genericPath + "/";
+			if(new File(Utils.GENERIC_PATH).exists())
+				path = Utils.GENERIC_PATH + "/";
 			else
 				path = "./File Word/";
 			
 			try {
-				File dir;
-				try {
-					dir = new File(path);
-				} catch (NullPointerException nullPointerException) {
-					throw new FolderNotExistsException();
-				}
+				File dir = new File(path);
 				
 				if(!dir.exists()) 
 					dir.mkdirs();
@@ -346,11 +347,9 @@ public class ManualInsertPanel extends JPanel {
 				nextMonth = 0;
 			
 			monthsBox.setSelectedIndex(nextMonth);
-		} catch (IndexOutOfBoundsException i) {
-			
-		} catch (NumberFormatException n) {
-			
-		} catch (Throwable e) {
+		} catch (IllegalArgumentException i) {
+			//Empty
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -375,11 +374,11 @@ public class ManualInsertPanel extends JPanel {
 			FileInputStream fis = new FileInputStream(capFilePath);
 			HSSFWorkbook workbook = new HSSFWorkbook(fis);
 		) {
-			sheet = workbook.getSheetAt(0);
+			HSSFSheet sheet = workbook.getSheetAt(0);
 			
 			if(sheet != null)
 				townField.getDocument().addDocumentListener(new TownFieldListener(sheet));
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -401,17 +400,15 @@ public class ManualInsertPanel extends JPanel {
 				for(int i = 0; i < TOWN_LISTED; i++) {
 					Cell cell = row.getCell(i*CELLS_BETWEEN_TOWN_NAMES);
 					
-					if(cell != null) {
+					if(cell != null && (townField.getText().equalsIgnoreCase(cell.getStringCellValue()))) {
 //						System.out.println("Reading cell (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ") = " + cell.getStringCellValue());
-						if(townField.getText().equalsIgnoreCase(cell.getStringCellValue())) {
-							int cap = (int) row.getCell(cell.getColumnIndex() + 1).getNumericCellValue();
-							String province = row.getCell(cell.getColumnIndex() + 2).getStringCellValue();
-							
-							capField.setText("" + cap);
-							provinceField.setText(province);
-							
-							return;
-						}
+						int cap = (int) row.getCell(cell.getColumnIndex() + 1).getNumericCellValue();
+						String province = row.getCell(cell.getColumnIndex() + 2).getStringCellValue();
+						
+						capField.setText("" + cap);
+						provinceField.setText(province);
+						
+						return;
 					}
 				}
 			}

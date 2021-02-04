@@ -115,7 +115,7 @@ public class ReadFromExcelPanel extends JPanel {
 	}
 	
 	private JPanel createInformationsPanel() {
-		typesBox = new JComboBox<>(Utils.types);
+		typesBox = new JComboBox<>(Utils.TYPES);
 		
 		TitledBorder typeBorder = new TitledBorder("Tipo");
 		typeBorder.setTitleColor(Utils.EG2001_CYAN);
@@ -146,7 +146,7 @@ public class ReadFromExcelPanel extends JPanel {
 		datePanel.setBorder(dateBorder);
 		datePanel.add(datePicker);
 		
-		monthsBox = new JComboBox<>(Utils.months);
+		monthsBox = new JComboBox<>(Utils.MONTHS);
 		setSelectedMonth();
 		
 		TitledBorder expiryBorder = new TitledBorder("Scadenza");
@@ -164,8 +164,8 @@ public class ReadFromExcelPanel extends JPanel {
 		openInExplorerButton.setFocusable(false);
 		openInExplorerButton.addActionListener((e) -> {
 			String path;
-			if(new File(Utils.genericPath).exists())
-				path = Utils.genericPath + "/";
+			if(new File(Utils.GENERIC_PATH).exists())
+				path = Utils.GENERIC_PATH + "/";
 			else
 				path = "./File Word/";
 			
@@ -238,7 +238,7 @@ public class ReadFromExcelPanel extends JPanel {
 				
 				currentFileLabel.setText(" File selezionato: " + fileName);
 				
-				for(String type : Utils.types) {
+				for(String type : Utils.TYPES) {
 					if(type.equals(fileName.substring(0, type.length())))
 						typesBox.setSelectedItem(type);
 				}
@@ -294,7 +294,7 @@ public class ReadFromExcelPanel extends JPanel {
 			if(extension.equals(null))
 				return false;
 			
-			if(extension.equals(Utils.xls))
+			if(extension.equals(Utils.XLS))
 				return true;
 			
 			return false;

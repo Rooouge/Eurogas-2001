@@ -233,7 +233,7 @@ public class WordGPL extends EG2001File {
 			run.setBold(true);
 			run.setFontSize(CreateWordUtils.FONT_SIZE_10);
 			run.setText(s);
-			s = Utils.numeroSanProspero;
+			s = Utils.TELEFONO_SAN_PROSPERO;
 			run = p.createRun();
 			run.setColor("228B22");
 			run.setBold(true);
@@ -244,7 +244,7 @@ public class WordGPL extends EG2001File {
 			run.setBold(true);
 			run.setFontSize(CreateWordUtils.FONT_SIZE_10);
 			run.setText(s);
-			s = Utils.numeroMilazzo;
+			s = Utils.TELEFONO_VIA_MILAZZO;
 			run.setColor("228B22");
 			run.setText(s);
 			run.addCarriageReturn();

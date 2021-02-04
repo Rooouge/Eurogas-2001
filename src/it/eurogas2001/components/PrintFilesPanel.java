@@ -70,7 +70,7 @@ public class PrintFilesPanel  extends JPanel {
 		int year = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH);
 		
-		monthsBox = new JComboBox<>(Utils.months);
+		monthsBox = new JComboBox<>(Utils.MONTHS);
 		if(month == 11)
 			monthsBox.setSelectedIndex(0);
 		else

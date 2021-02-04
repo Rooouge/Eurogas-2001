@@ -8,22 +8,22 @@ import it.eurogas2001.components.fileinformation.InformationClass;
 
 public class Utils {
 	
-	public static final String numeroSanProspero = "0521 1681226";
-	public static final String numeroMilazzo = "0521 1771410";
+	public static final String TELEFONO_SAN_PROSPERO = "0521 1681226";
+	public static final String TELEFONO_VIA_MILAZZO = "0521 1771410";
 
-	public static final String genericPath = "./working_folder/File Word/";
+	public static final String GENERIC_PATH = "./working_folder/File Word/";
 	
 	public static final float FONT_SIZE = 12f;
 	
 	public static final Color EG2001_CYAN = new Color(0, 100, 160);
 	public static final Color BACKGROUND_COLOR = Color.WHITE;
 	
-	public static final String xls = "xls";
+	public static final String XLS = "xls";
 	
-	public static Graphics g = null;
+	public static final Graphics GRAPHICS = null;
 	
-	public static final String[] types = {"METANO", "GPL"};
-	public static final String[] months = {
+	public static final String[] TYPES = {"METANO", "GPL"};
+	public static final String[] MONTHS = {
 		"GENNAIO",
 		"FEBBRAIO",
 		"MARZO",
@@ -38,7 +38,7 @@ public class Utils {
 		"DICEMBRE"
 	};
 	
-	public static enum Months {
+	public enum Months {
 		GENNAIO ("GENNAIO", 1),
 		FEBBRAIO ("FEBBRAIO", 2),
 		MARZO ("MARZO", 3),
@@ -52,22 +52,30 @@ public class Utils {
 		NOVEMBRE ("NOVEMBRE", 11),
 		DICEMBRE ("DICEMBRE", 12);
 		
-		public String name;
-		public int index;
+		String name;
+		int index;
 		
 		Months(String name, int index) {
 			this.name = name;
 			this.index = index;
 		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public int getIndex() {
+			return index;
+		}
 	}
 	
-	public static final String[] searchTypesBox = {
+	public static final String[] SEARCHBOX_TYPES = {
 		"Nome", 
 		"Indirizzo", 
 		"Città"
 	};
 	
-	public static final String[] availableFormats = {
+	public static final String[] AVAILABLE_FORMATS = {
 		"File .txt (File di testo)",
 		"File .doc (File Word)"
 	};

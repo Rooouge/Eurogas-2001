@@ -34,8 +34,8 @@ public class PrintFilesFrame {
 		
 		try {
 			String path;
-			if(new File(Utils.genericPath).exists())
-				path = Utils.genericPath + month + "/";
+			if(new File(Utils.GENERIC_PATH).exists())
+				path = Utils.GENERIC_PATH + month + "/";
 			else
 				path = "./File Word/" + month + "/";
 			

@@ -43,13 +43,13 @@ import it.eurogas2001.operations.printfiles.PrintFilesFrame;
 
 public class TableFromExcelFrame {
 
-	public static final String[] columnNames = {"#", "Nome", "Indirizzo", "Città", "Provincia", "CAP"};
+	public static final String[] COLUMNS = {"#", "Nome", "Indirizzo", "Città", "Provincia", "CAP"};
 
 	private JFrame frame;
 	
 	private File file;
 	
-	private List<InformationClass> list;
+	private List<InformationClass> informationClasses;
 	
 	private JTable table;
 	private Model tableModel;
@@ -66,26 +66,24 @@ public class TableFromExcelFrame {
 		this(application, null, month, type, date, list);
 	}
 	
-	public TableFromExcelFrame(Application application, File file, String month, String type, String date, List<InformationClass> list) {
+	public TableFromExcelFrame(Application application, File file, String month, String type, String date, List<InformationClass> informationClasses) {
 		this.file = file;
 		this.month = month;
-		if(list != null)
-			this.list = list;
+		if(informationClasses != null)
+			this.informationClasses = informationClasses;
 		
 		frame = new JFrame();
 		
 		JButton saveButton = new JButton(new ImageIcon(getClass().getResource("/icons/save.png")));
 		saveButton.setFocusable(false);
-		saveButton.addActionListener((e) -> {
-			new SaveFilesToDiskFrame(application, createFramesList(), createOutputList(), month, type, date);
-		});
+		saveButton.addActionListener(e -> new SaveFilesToDiskFrame(application, createFramesList(), createOutputList(), month, type, date) );
 		
 		JButton printButton = new JButton(new ImageIcon(getClass().getResource("/icons/print.png")));
 		printButton.setFocusable(false);
-		printButton.addActionListener((e) -> {
+		printButton.addActionListener(e -> {
 			String pathForSave;
-			if(new File(Utils.genericPath).exists())
-				pathForSave = Utils.genericPath + this.month + "/";
+			if(new File(Utils.GENERIC_PATH).exists())
+				pathForSave = Utils.GENERIC_PATH + this.month + "/";
 			else
 				pathForSave = "./File Word/" + this.month + "/";
 			
@@ -120,10 +118,10 @@ public class TableFromExcelFrame {
 		
 		JButton openInExplorerButton = new JButton(new ImageIcon(getClass().getResource("/icons/open_folder.png")));
 		openInExplorerButton.setFocusable(false);
-		openInExplorerButton.addActionListener((e) -> {
+		openInExplorerButton.addActionListener(e -> {
 			String path;
-			if(new File(Utils.genericPath).exists())
-				path = Utils.genericPath + this.month + "/";
+			if(new File(Utils.GENERIC_PATH).exists())
+				path = Utils.GENERIC_PATH + this.month + "/";
 			else
 				path = "./File Word/" + this.month + "/";
 			
@@ -144,7 +142,7 @@ public class TableFromExcelFrame {
 		
 		JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/icons/delete.png")));
 		deleteButton.setFocusable(false);
-		deleteButton.addActionListener((e) -> {
+		deleteButton.addActionListener(e -> {
 			int response = JOptionPane.showConfirmDialog(
 					frame, 
 					"Hai selezionato " + table.getSelectedRowCount() + " righe: vuoi cancellarle?",
@@ -154,7 +152,7 @@ public class TableFromExcelFrame {
 			if(response == JOptionPane.OK_OPTION) {
 				for(int row : table.getSelectedRows()) {
 					searchBar.setText("");
-					list.remove(row);
+					informationClasses.remove(row);
 					updateTablePanelCount(sorter.getViewRowCount());
 					frame.repaint();
 				}
@@ -225,14 +223,14 @@ public class TableFromExcelFrame {
 	}
 	
 	private void createTablePanel() {
-		if(list == null) {
+		if(informationClasses == null) {
 			try (
 				FileInputStream fis = new FileInputStream(file);
 				HSSFWorkbook workbook = new HSSFWorkbook(fis);
 			) {		
 				HSSFSheet sheet = workbook.getSheetAt(0);
 				
-				list = new ArrayList<>();
+				informationClasses = new ArrayList<>();
 				
 				readFromSheet(sheet);			
 				
@@ -247,7 +245,7 @@ public class TableFromExcelFrame {
 				tablePanel.setBorder(border);
 				
 				updateTablePanelCount(table.getRowCount());
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -274,28 +272,28 @@ public class TableFromExcelFrame {
 	
 	private void readFromSheet(HSSFSheet sheet) {
 		for(Row row : sheet) {
-			if(!(row.getRowNum() == 0)) {
+			if(row.getRowNum() != 0) {
 				String name = row.getCell(32).getStringCellValue();
-				if(name.equals(""))
+				if(name == null || name.equals(""))
 					name = row.getCell(19).getStringCellValue();
 				
 				String address = row.getCell(33).getStringCellValue();
-				if(address.equals(""))
+				if(address == null || address.equals(""))
 					address = row.getCell(20).getStringCellValue();
 				
 				String town = row.getCell(35).getStringCellValue();
-				if(town.equals(""))
+				if(town == null || town.equals(""))
 					town = row.getCell(22).getStringCellValue();
 				
 				String province = row.getCell(34).getStringCellValue();
-				if(province.equals(""))
+				if(province == null || province.equals(""))
 					province = row.getCell(21).getStringCellValue();
 				
 				int cap = -1;
 				try {
 					cap = Integer.parseInt(row.getCell(23).getStringCellValue());
-				} catch (Throwable e) {
-					
+				} catch (Exception e) {
+					//Empty
 				}
 				
 //				System.out.println(
@@ -313,16 +311,16 @@ public class TableFromExcelFrame {
 				
 				int expiryMonth = Integer.parseInt(row.getCell(27).getStringCellValue().substring(4, 6));
 				
-				if(expiryMonth == Months.valueOf(month.substring(0, month.length() - 5)).index)
-					list.add(new ExcelRowData(row.getRowNum(), name, address, town, province, cap));
+				if(expiryMonth == Months.valueOf(month.substring(0, month.length() - 5)).getIndex())
+					informationClasses.add(new ExcelRowData(row.getRowNum(), name, address, town, province, cap));
 			
 			}
 		}
 	}
 	
 	private void addToTable() {
-		for(int i = 0; i < list.size(); i++) {
-			InformationClass row = list.get(i);
+		for(int i = 0; i < informationClasses.size(); i++) {
+			InformationClass row = informationClasses.get(i);
 			
 			table.setValueAt(i+1, i, 0);
 			table.setValueAt(row.name, i, 1);
@@ -344,7 +342,7 @@ public class TableFromExcelFrame {
 	private ArrayList<InformationClass> createOutputList() {
 		ArrayList<InformationClass> outputList = new ArrayList<>();
 		
-		for(InformationClass row : list) {
+		for(InformationClass row : informationClasses) {
 			boolean condition = row.address.contains(searchBar.getText().toUpperCase()) ||
 			row.name.contains(searchBar.getText().toUpperCase()) ||
 			row.province.contains(searchBar.getText().toUpperCase()) ||
@@ -364,7 +362,7 @@ public class TableFromExcelFrame {
 		
 		@Override
 		public int getRowCount() {
-			return list.size();
+			return informationClasses.size();
 		}
 		
 		@Override
@@ -374,7 +372,7 @@ public class TableFromExcelFrame {
 		
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			InformationClass excelRowData = list.get(rowIndex);
+			InformationClass excelRowData = informationClasses.get(rowIndex);
 			
 			switch (columnIndex) {
 			case 0:
@@ -416,7 +414,7 @@ public class TableFromExcelFrame {
 		
 		@Override
 		public String getColumnName(int columnIndex) {
-			return columnNames[columnIndex];
+			return COLUMNS[columnIndex];
 		}
 		
 		@Override
@@ -426,7 +424,7 @@ public class TableFromExcelFrame {
 		
 		@Override
 		public void setValueAt(Object value, int rowIndex, int columnIndex) {
-			InformationClass excelRowData = list.get(rowIndex);
+			InformationClass excelRowData = informationClasses.get(rowIndex);
 			
 			switch (columnIndex) {
 			case 0:
@@ -458,26 +456,12 @@ public class TableFromExcelFrame {
 
 		@Override
 		public void changedUpdate(DocumentEvent e) {
-			String text = searchBar.getText();
-			
-			if(text.trim().length() == 0)
-				sorter.setRowFilter(null);
-			else
-				sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-						
-			updateTablePanelCount(sorter.getViewRowCount());
+			update();
 		}
 
 		@Override
 		public void insertUpdate(DocumentEvent e) {
-			String text = searchBar.getText();
-			
-			if(text.trim().length() == 0)
-				sorter.setRowFilter(null);
-			else
-				sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-						
-			updateTablePanelCount(sorter.getViewRowCount());
+			update();
 		}
 
 		@Override
@@ -489,6 +473,17 @@ public class TableFromExcelFrame {
 			else
 				sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
 			
+			updateTablePanelCount(sorter.getViewRowCount());
+		}
+		
+		private void update() {
+			String text = searchBar.getText();
+			
+			if(text.trim().length() == 0)
+				sorter.setRowFilter(null);
+			else
+				sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+						
 			updateTablePanelCount(sorter.getViewRowCount());
 		}
 	}

@@ -14,7 +14,7 @@ public class ExcelView extends FileView {
 		String extension = Utils.getExtension(f);
 		String type = null;
 		
-		if(extension.equals(Utils.xls))
+		if(extension.equals(Utils.XLS))
 			type = "Excel (.xls)";
 		
 		return type;
@@ -28,7 +28,7 @@ public class ExcelView extends FileView {
 		if(extension == null)
 			return null;
 			
-		if(extension.equals(Utils.xls))
+		if(extension.equals(Utils.XLS))
 			icon = new ImageIcon(getClass().getResource("/icons/excel_icon.png"));
 		
 		return icon;

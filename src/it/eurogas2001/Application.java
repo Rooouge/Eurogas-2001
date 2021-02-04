@@ -19,7 +19,7 @@ public class Application implements Runnable {
 	
 	@Override
 	public void run() {
-		allFrames = new ArrayList<JFrame>();
+		allFrames = new ArrayList<>();
 		
 		applicationWindow = new ApplicationWindow(this);
 		applicationWindow.show();
